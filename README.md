@@ -5,6 +5,13 @@ https://modosdk.foundry.com/wiki/File_Formats
 This reader allows to specify chunks to be read, which increases reading speed significantly in various cases. I started this a means to e.g. read filenames stored in an LXO file. It also allows to run basic checks without the overhead of starting Modo.
 
 ### Examples
+Usage as command line tool: Output all chunks and subchunks
+
+```
+./lxoReader.py <filepath> -d
+```
+
+Usage as python module
 ```python
 import lxoReader
 
