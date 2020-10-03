@@ -11,8 +11,8 @@
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
 
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -724,7 +724,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument("sourceFile", help="source FILE", metavar="FILE")
     parser.add_argument("-d", "--debug", action="store_true")
-    parser.add_argument("-p", "--progress", action="store_true")
     parser.add_argument("-P", "--prettyPrint", action="store_true")
 
     args = parser.parse_args()
@@ -733,7 +732,6 @@ if __name__ == '__main__':
         DEBUG = True
 
     lxoRead = LXOReader()
-    lxoRead.showProgress = args.progress
     # lxoRead.tagsToRead = []
 
     lxo = lxoRead.readFromFile(args.sourceFile)
