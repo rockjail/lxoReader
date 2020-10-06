@@ -62,6 +62,8 @@ class LXOLayer(object):
         self.materials = {}
         self.uvMaps = {}
         self.uvMapsDisco = {}
+        self.vertexNormals = {}
+        self.vertexNormalsDisco = {}
 
     @property
     def parent(self):
@@ -465,6 +467,8 @@ class LXOReader(object):
                     values[index] = vv
                 if mapType == 'TXUV':
                     currentLayer.uvMaps[name] = values
+                elif mapType == 'NORM':
+                    currentLayer.vertexNormals[name] = values
                 if DEBUG:
                     print(mapType, dimension, name, len(values))
             elif chunkID == 'VMAD':
@@ -484,6 +488,8 @@ class LXOReader(object):
                         values[polyIndex] = {vertIndex: vv}
                 if mapType == 'TXUV':
                     currentLayer.uvMapsDisco[name] = values
+                elif mapType == 'NORM':
+                    currentLayer.vertexNormalsDisco[name] = values
                 if DEBUG:
                     print(mapType, dimension, name, len(values))
             elif chunkID == 'PTAG':
@@ -556,7 +562,14 @@ class LXOReader(object):
                         graphname = self.readS0()
                         itemIndex = self.readI4()
                         linkIndex = self.readI4()
-                        item.graphLinks[graphname] = (itemIndex, linkIndex)
+                        # TODO handle properly
+                        if graphname not in item.graphLinks:
+                            item.graphLinks[graphname] = (itemIndex, linkIndex)
+                        else:
+                            if DEBUG:
+                                print(colored("ERROR duplicate graph link",
+                                              'red'),)
+                                print(graphname, itemIndex, linkIndex)
                         if DEBUG:
                             print(graphname, itemIndex, linkIndex)
                     elif subchunkID == 'CHNL':
