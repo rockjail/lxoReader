@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # MIT License
 
@@ -661,6 +661,15 @@ class LXOReader(object):
                             print(colored("BLOB", "red"), blob)
             elif chunkID == 'ACTN':  # action layers: edit, scene, setup
                 self.__readACTN(lxoFile, sizeSnap, chunkSize)
+            elif chunkID == 'DATA':
+                index = self.readU4()
+                unkown = self.readU4()
+                exotype = self.readS0()
+                if exotype == '+intrange':
+                    value = self.readS0()
+                else:
+                    value = self.readblob(chunkSize - (sizeSnap - self.modSize))
+                lxoFile.data.append((index, unkown, exotype, value))
             else:
                 self.modSize -= chunkSize
                 self.file.seek(chunkSize, 1)  # skipping chunk
