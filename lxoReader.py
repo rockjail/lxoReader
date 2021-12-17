@@ -507,9 +507,60 @@ class LXOReader(object):
                 index = self.readVX()
                 type = self.readU4()
                 blobsize = chunkSize - (sizeSnap - self.modSize)
-                subchunks = self.readblob(blobsize)  # TODO
                 if DEBUG:
                     print(index, type)
+
+                while (sizeSnap - self.modSize) < chunkSize:
+                    subchunkID = self.readID4()
+                    subchunkSize = self.readU2()
+                    subsizeSnap = self.modSize
+                    
+                    # only read the tags specified
+                    if (self.tagsToRead and
+                            chunkID + subchunkID not in self.tagsToRead):
+                        self.modSize -= subchunkSize
+                        self.file.seek(subchunkSize, 1)
+                        continue
+
+                    if DEBUG:
+                        print("", colored(subchunkID, 'yellow'), end=" ")
+
+                    if subchunkID == 'PRE ':
+                        value = self.readU2()
+                        if DEBUG:
+                            print(value)
+                    elif subchunkID == 'POST':
+                        value = self.readU2()
+                        if DEBUG:
+                            print(value)
+                    elif subchunkID == 'KEY ':
+                        input_value = self.readF4()
+                        value = self.readF4()
+                        if DEBUG:
+                            print(input_value, value)
+                    elif subchunkID == 'TANI':
+                        slope_type = self.readU2()
+                        weight_type = self.readU2()
+                        weight = self.readF4()
+                        slope = self.readF4()
+                        value = self.readF4()
+                        if DEBUG:
+                            print(slope_type, weight_type, weight, slope, value)
+                    elif subchunkID == 'TANO':
+                        key_flag = self.readU4()
+                        slope_type = self.readU2()
+                        weight_type = self.readU2()
+                        weight = self.readF4()
+                        slope = self.readF4()
+                        value = self.readF4()
+                        if DEBUG:
+                            print(key_flag, slope_type, weight_type, weight, slope, value)
+                    else:
+                        blobsize = subchunkSize - (subsizeSnap - self.modSize)
+                        blob = self.readblob(blobsize)
+                        if DEBUG:
+                            print(colored("BLOB", "red"), blob)
+
             elif chunkID == 'BBOX':
                 minXYZ = self.readVEC12()
                 maxXYZ = self.readVEC12()
@@ -672,9 +723,9 @@ class LXOReader(object):
                 lxoFile.data.append((index, unkown, exotype, value))
             else:
                 self.modSize -= chunkSize
-                self.file.seek(chunkSize, 1)  # skipping chunk
+                blob = self.readblob(chunkSize - (sizeSnap - self.modSize))
                 if DEBUG:
-                    print(colored("BLOB skipped", "red"))
+                    print(colored("BLOB", "red"), blob)
 
     def __readACTN(self, lxoFile, sizeSnap, chunkSize):
         actionlayername = self.readS0()
