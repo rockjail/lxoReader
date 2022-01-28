@@ -711,7 +711,7 @@ class LXOReader(object):
                         if DEBUG:
                             print(colored("BLOB", "red"), blob)
             elif chunkID == 'ACTN':  # action layers: edit, scene, setup
-                self.__readACTN(lxoFile, sizeSnap, chunkSize)
+                self.__readACTN(lxoFile, chunkID, sizeSnap, chunkSize)
             elif chunkID == 'DATA':
                 index = self.readU4()
                 unkown = self.readU4()
@@ -727,7 +727,7 @@ class LXOReader(object):
                 if DEBUG:
                     print(colored("BLOB", "red"), blob)
 
-    def __readACTN(self, lxoFile, sizeSnap, chunkSize):
+    def __readACTN(self, lxoFile, chunkID, sizeSnap, chunkSize):
         actionlayername = self.readS0()
         actionlayertype = self.readS0()
         actionlayerindex = self.readU4()
