@@ -721,11 +721,22 @@ class LXOReader(object):
                 else:
                     value = self.readblob(chunkSize - (sizeSnap - self.modSize))
                 lxoFile.data.append((index, unkown, exotype, value))
+            elif chunkID == 'PRVW':
+                width = self.readU2()
+                height = self.readU2()
+                format = self.readU4()
+                flags = self.readU4()
+                blob = self.readblob(chunkSize - (sizeSnap - self.modSize))
+                
+                if DEBUG:
+                    print(width, height, format, flags)
+                    print(colored("BLOB len", "red"), len(blob))
             else:
                 self.modSize -= chunkSize
-                blob = self.readblob(chunkSize - (sizeSnap - self.modSize))
+                blob = self.readblob(chunkSize)
                 if DEBUG:
                     print(colored("BLOB", "red"), blob)
+                    print(chunkSize, sizeSnap - self.modSize)
 
     def __readACTN(self, lxoFile, chunkID, sizeSnap, chunkSize):
         actionlayername = self.readS0()
